@@ -10,7 +10,7 @@ As you probably know, instead of buying a programmer, as a maker, I just modifie
 
 In the future, I will design a printed circuit board. For a while, we have it soldered in a prototype board, as can be seen below:
 ![Prototype Programmer](images/nano_as_ISP_board.jpg)
-The wiring is explained down below.
+The wiring is explained in the section below.
 The LED colors are:
 - Green: Heartbeat, as a heart it stays beating to say that the programmer is alive!
 - Red: Error! It stays on when the attempt to program fails.
@@ -29,30 +29,32 @@ In the future I will create a make file. For now:
 - `cd` to [build](build/) folder.
 - Flash it using avrdude: `avrdude -v -patmega328p -Cavrdude.conf -carduino -b57600 -D -P"/dev/cu.*" -Uflash:w:firmware.hex:i`
 
+**Note**: Remember to remove the jumper.
+
 P.S.: Some boards does not accept some baud rates, accordingly to this [website](https://cache.amobbs.com/bbs_upload782111/files_22/ourdev_508497.html), looks like that the percentage of error is greater in some baud rates while operating in some frequencies. So, if you try to flash using 57600 and an error appears like `avrdude: stk500_recv(): programmer is not responding`, try another baud rate until it flashes correctly.
 
 _____________
 
 ## Flash codes to the target microcontroller using nano as ISP
-Now that our programmer has the ArduinoISP code, we need to configure it to act as an ISP programmer. In other words, we need ensure that the code that we are trying to flash goes to the target board.
+Now that our programmer has the ArduinoISP code, we need to configure it to act as an ISP programmer. In other words, we need ensure that the code that we are trying to flash goes to target board.
 
 Without a knowledge in electronics this is a pain in the ass. Some tutorials on the internet present some wizardry solutions without any explanations. I will try to avoid that.
 
 **========= Long Explanation =========**
 
-First things first. We need to understand what we are doing: **We are using a microcontroller to program another microcontroller**. We know that microcontrollers (in general) does not have USB communication capability. So, in every arduino board we have a USB-to-Serial chip that converts USB communication to serial one (e.g. CH340, FT232RL or even ATMEGA8U2-MU in original Arduino Uno boards).
+First things first. We need to understand what we are doing: **We are using a microcontroller to program another microcontroller**. We know that microcontrollers (in general) does not have USB communication capability. That is why we have an USB-to-Serial chip in every arduino board, which converts USB communication to serial communication (e.g. CH340, FT232RL or even ATMEGA8U2-MU in original Arduino Uno boards).
 When booting, the microcontroller has two choices:
   
   1. Run the already flashed code, or;
   2. Enter in flashing mode to receive a new code to run.
   
-This choice is made by the bootloader. When the microcontroller boots (after the reset signal provided by the USB-to-Serial chip, which connects the DTR to the RESET pin of AVR microcontroller), it reads some data instructions on the RX/TX, if it sends specific instructions to enter in flashing mode, the microcontroller does so, otherwise, it executes the flashed code.
+This choice is made by the bootloader. When the microcontroller boots (after the reset signal provided by the USB-to-Serial chip), it reads some data instructions on the RX/TX, if it receives specific instructions to enter in flashing mode, the microcontroller does so, otherwise, it executes the flashed code.
 
 Now, we need to differentiate this flashing mode to the ISP flashing mode. **It is not the same? No.** 
 
-When flashing using the USB-to-Serial chip we are giving instructions (physically) through the RX/TX pins to the bootloader to enter in flash mode and receive a bunch of hexadecimal values to reprogram it. Thus, we are capable to reflash the program itself, but we are not capable to remove the bootloader (we can do it using ISP programmers).
+When flashing using the USB-to-Serial chip we are giving instructions (physically) through the RX/TX pins to the bootloader. These instructions says to enter in flash mode and receive a bunch of hexadecimal values to reprogram the microcontroller. Thus, we are capable to reflash the program itself, but we are not capable to remove or update the bootloader.
 
-On the other hand, when flashing using the ISP we are giving the same instructions, however, through three SPI lines (MISO, MOSI and SCK) according to the standard SPI programming protocol. These pins are reserved for this "more advanced" flashing mode, where we can even reflash the bootloader.
+On the other hand, when flashing using ISP, we are giving the same instructions, however, through three SPI lines (MISO, MOSI and SCK) according to the standard SPI programming protocol. These pins are reserved for this "more advanced" flashing mode, where we can even update or remove the bootloader.
 
 On both cases, the RESET pin of the target microcontroller is pulled down momentarily to begin sending these instructions.
 
@@ -60,15 +62,15 @@ Now comes the pain in the ass part. When we are using the arduino nano as a prog
 
 Computer USB  ==> USB-to-Serial chip ==> Programmer AVR Chip ==> Target AVR Chip
 
-The problem is that when a serial communication between the Computer USB and USB-to-Serial chip begins (while sending the hexadecimal values), the DTR pin of USB-to-Serial chip, which is physically connected to RESET pin of Programmer AVR Chip (see [nano datasheet](https://www.arduino.cc/en/uploads/Main/Arduino_Nano-Rev3.2-SCH.pdf), the same apply to the [uno datasheet](https://www.arduino.cc/en/uploads/Main/arduino-uno-schematic.pdf)) goes momentarily to LOW, resetting the Programmer AVR Chip.
+The problem resides in the fact that when a serial communication starts, the DTR pin of USB-to-Serial chip, which is physically connected to RESET pin of Programmer AVR Chip (see [nano datasheet](https://www.arduino.cc/en/uploads/Main/Arduino_Nano-Rev3.2-SCH.pdf), or [uno datasheet](https://www.arduino.cc/en/uploads/Main/arduino-uno-schematic.pdf)) goes momentarily to LOW, resetting the Programmer AVR Chip.
 
-This is very useful when we want to program the Programmer AVR Chip, however while programming the Target AVR Chip we do not want it. Thus, the solution is: After successfully programming the Programmer AVR Chip (which need to be done once), plug a 10uF capacitor between the RESET and GND pins of the Programmer Board.
+This is very useful when we want to program the Programmer AVR Chip, however while programming the Target AVR Chip we do not want it. Thus, the solution is to plug a 10uF capacitor between the RESET and GND pins of the Programmer Board.
 
 **========= TLDR =========**
 
 We need to plug a 10uF capacitor between the RESET and GND pins of the Programmer Board.
 
-Then, the RESET pin of the programmer will not be pulled LOW when a communication begin between the Computer USB and USB-to_Serial chip. On other words, DTR pin will not have any effect.
+Then, the RESET pin of the programmer will not be pulled LOW when a communication begins between the Computer USB and USB-to-Serial chip. On other words, DTR pin will not have any effect.
 
 But how the target AVR chip knows that it is necessary to reset? Well, the ArduinoISP code handles that through D10 pin. Which leads to the following wiring:
 
@@ -84,7 +86,7 @@ But how the target AVR chip knows that it is necessary to reset? Well, the Ardui
 | GND                 | GND             |
 
 Note that in the target, we use exactly the available pins on the ICSP header, just be careful because in some non original Nano boards the header is flipped.
-Also, be careful when programming 3.3V only boards. Operate the programmer in 3.3V doing an electronic modifications (**try to implement this on the board**).
+Also, be careful when programming 3.3V only boards. In this case operate the programmer in 3.3V doing an electronic modifications (**try to implement this on the board**).
 
 ### Flashing
 

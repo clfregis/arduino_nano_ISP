@@ -17,4 +17,6 @@ In the future I will create a make file. For now:
 
 - Clone this repo: `git clone ...`
 - `cd` to [build](build/) folder.
-- Flash it using avrdude: `avrdude -v -patmega328p -Cavrdude.conf -carduino -b115200 -D -P"/dev/cu.*" -Uflash:w:firmware.hex:i`
+- Flash it using avrdude: `avrdude -v -patmega328p -Cavrdude.conf -carduino -b57600 -D -P"/dev/cu.*" -Uflash:w:firmware.hex:i`
+
+P.S.: For some reason, some boards does not accept some baud rates, based on this (site)[https://cache.amobbs.com/bbs_upload782111/files_22/ourdev_508497.html] looks like the percentage of error is greater in some baud rates while in some frequencies. So, if it do not flash using 57600, try another baud rate until it flashes

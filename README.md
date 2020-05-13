@@ -95,3 +95,12 @@ After doing all the wiring, compile the code you want to upload, take the hexade
 - Flash it using avrdude: `avrdude -v -patmega328p -Cavrdude.conf -cstk500v1 -b19200 -D -P"/dev/cu.*" -Uflash:w:firmware.hex:i`
 
 Still testing, but for now, I was only able to use 19200 as baud rate
+
+
+### Reburn bootloader
+
+When you flash the chip using arduino as ISP you remove the bootloader from the target chip. Thus, if you want to flash the target board again using its on board USB-to-Serial chip, you will need to reburn the bootloader. To do so, follow the steps below using arduino as ISP programmer:
+
+1. `cd` to [build](build/) folder.
+2. `avrdude -Cavrdude.conf -v -patmega328p -cstk500v1 -P/dev/cu.* -b19200 -e -Ulock:w:0x3F:m -Uefuse:w:0xFD:m -Uhfuse:w:0xDE:m -Ulfuse:w:0xFF:m`
+3. `avrdude -Cavrdude.conf -v -patmega328p -cstk500v1 -P/dev/cu.* -b19200 -Uflash:w:optiboot_atmega328.hex:i -Ulock:w:0x0F:m`

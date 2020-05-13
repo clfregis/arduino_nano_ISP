@@ -63,6 +63,7 @@ Then, the RESET pin of the programmer will not be pulled LOW when a communicatio
 But how the target AVR chip knows that it is necessary to reset? Well, the ArduinoISP code handles that through D10 pin. Which leads to the following wiring:
 
 ### Wiring
+
 |Programmer AVR Chip|Target AVR Chip|
 |===================|===============|
 | D12 (MISO)        | D12 (MISO)    |

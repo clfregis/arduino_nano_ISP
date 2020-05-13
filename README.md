@@ -64,14 +64,14 @@ But how the target AVR chip knows that it is necessary to reset? Well, the Ardui
 
 ### Wiring
 
-|Programmer AVR Chip|Target AVR Chip|
-|===================|===============|
-| D12 (MISO)        | D12 (MISO)    |
-| D13 (SCK)         | D13 (SCK)     |
-| D10               | RESET         |
-| 5V                | 5V            |
-| D11 (MOSI)        | D11 (MOSI)    |
-| GND               | GND           |
+| Programmer AVR Chip | Target AVR Chip |
+| ------------------- | --------------- |
+| D12 (MISO)          | D12 (MISO)      |
+| D13 (SCK)           | D13 (SCK)       |
+| D10                 | RESET           |
+| 5V                  | 5V              |
+| D11 (MOSI)          | D11 (MOSI)      |
+| GND                 | GND             |
 
 Note that in the target, we use exactly the available pins on the ICSP header, just be careful because in some non original Nano boards the header is flipped.
 Also, be careful when programming 3.3V only boards. Operate the programmer in 3.3V doing an electronic modifications (**try to implement this on the board**).

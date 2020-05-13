@@ -19,4 +19,4 @@ In the future I will create a make file. For now:
 - `cd` to [build](build/) folder.
 - Flash it using avrdude: `avrdude -v -patmega328p -Cavrdude.conf -carduino -b57600 -D -P"/dev/cu.*" -Uflash:w:firmware.hex:i`
 
-P.S.: For some reason, some boards does not accept some baud rates, based on this (site)[https://cache.amobbs.com/bbs_upload782111/files_22/ourdev_508497.html] looks like the percentage of error is greater in some baud rates while in some frequencies. So, if it do not flash using 57600, try another baud rate until it flashes
+P.S.: For some reason, some boards does not accept some baud rates, based on this [website](https://cache.amobbs.com/bbs_upload782111/files_22/ourdev_508497.html) looks like the percentage of error is greater in some baud rates while operating in some frequencies. So, if it do not flash using 57600 and appear and error like `avrdude: stk500_recv(): programmer is not responding`, try another baud rate until it flashes correctly.

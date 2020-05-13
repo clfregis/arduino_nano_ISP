@@ -8,7 +8,17 @@ But, my projects became very regular and I had a necessity to have a more robust
 
 As you probably know, instead of buying a programmer, as a maker, I just modified an arduino nano to be my programmer. Thus, in this repository I have pushed all files necessary to use an arduino nano as programmer.
 
-In the future, I will create a board which will contain all the heartbeat LEDs, etc, like shown [here](https://www.arduino.cc/en/tutorial/arduinoISP).
+In the future, I will design a printed circuit board. For a while, we have it soldered in a prototype board, as can be seen below:
+![Prototype Programmer](images/nano_as_ISP_board.jpg)
+The wiring is explained down below.
+The LED colors are:
+- Green: Heartbeat, as a heart it stays beating to say that the programmer is alive!
+- Red: Error! It stays on when the attempt to program fails.
+- Yellow: Programming. It stays blinking when it is flashing the program.
+
+**Note**: To flash the ArduinoISP code into the programmer please remove the jumper.
+
+ More info [here](https://www.arduino.cc/en/tutorial/arduinoISP).
 
 _____________
 
@@ -42,7 +52,7 @@ Now, we need to differentiate this flashing mode to the ISP flashing mode. **It 
 
 When flashing using the USB-to-Serial chip we are giving instructions (physically) through the RX/TX pins to the bootloader to enter in flash mode and receive a bunch of hexadecimal values to reprogram it. Thus, we are capable to reflash the program itself, but we are not capable to remove the bootloader (we can do it using ISP programmers).
 
-On the other hand, when flashing using the ISP we are giving the same instructions, however, through specific pins reserved for this "more advanced" flashing mode, where we can even reflash the bootloader.
+On the other hand, when flashing using the ISP we are giving the same instructions, however, through three SPI lines (MISO, MOSI and SCK) according to the standard SPI programming protocol. These pins are reserved for this "more advanced" flashing mode, where we can even reflash the bootloader.
 
 On both cases, the RESET pin of the target microcontroller is pulled down momentarily to begin sending these instructions.
 

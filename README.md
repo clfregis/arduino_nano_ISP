@@ -10,7 +10,7 @@ As you probably know, instead of buying a programmer, as a maker, I just modifie
 
 In the future, I will design a printed circuit board. For a while, we have it soldered in a prototype board, as can be seen below:
 ![Prototype Programmer](images/nano_as_ISP_board.jpg)
-The wiring is explained down below.
+The wiring is explained in the section below.
 The LED colors are:
 - Green: Heartbeat, as a heart it stays beating to say that the programmer is alive!
 - Red: Error! It stays on when the attempt to program fails.
